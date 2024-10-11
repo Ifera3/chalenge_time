@@ -1,1 +1,3 @@
-# chalenge_time
+# Chalenge Time
+
+## From dmoj.ca
