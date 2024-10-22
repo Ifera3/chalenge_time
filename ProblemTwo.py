@@ -49,18 +49,50 @@ def getInput():
 
 def algrithmTime(holeLingth,clubLingths):
     distLeft = holeLingth
-    numberOfStrokes = [0]
+    numberOfStrokes = []
     tempNumberOfStrokes = 0
+    clubList = []
+
     for i in clubLingths:
-        while i <= distLeft:
-            distLeft = distLeft - i
+        clubList.append([i,0])
+    for i in clubList:
+        while i[0] <= distLeft:
+            distLeft = distLeft - i[0]
             tempNumberOfStrokes = tempNumberOfStrokes + 1
-    if distLeft != 0:
-        return 0
-    elif distLeft == 0:
-        numberOfStrokes.append(tempNumberOfStrokes)
+            i[1] = i[1] + 1
     else:
-        return numberOfStrokes
+        if distLeft == 0:
+            numberOfStrokes.append(tempNumberOfStrokes)
+    print(clubList,numberOfStrokes)
+
+    for i in range(len(clubList)):
+        for sub in range(1,clubList[i][1]+1):
+            tempNumberOfStrokes = 0
+            distLeft = holeLingth
+            print(distLeft,i,tempNumberOfStrokes)
+            if i != 0:
+                for I in range(i):
+                    distLeft = distLeft - (clubList[I][0]*(clubList[I][1]))
+                    tempNumberOfStrokes = tempNumberOfStrokes + clubList[I][1]
+                    print(distLeft,tempNumberOfStrokes)
+            distLeft = distLeft - (clubList[i][0]*(clubList[i][1]-sub))
+            tempNumberOfStrokes = tempNumberOfStrokes + (clubList[i][1]-sub)
+            print(distLeft,tempNumberOfStrokes)
+            for I in range(i+1,len(clubList)):
+                while clubLingths[I] <= distLeft:
+                    distLeft = distLeft - clubLingths[I]
+                    tempNumberOfStrokes = tempNumberOfStrokes + 1
+                    print(distLeft,tempNumberOfStrokes)
+            if distLeft == 0:
+                numberOfStrokes.append(tempNumberOfStrokes)
+            print(distLeft,tempNumberOfStrokes,numberOfStrokes)
+    #for i in clubLingths:
+    #    if holeLingth % i == 0:
+    #        tempNumberOfStrokes = int(holeLingth / i)
+    #        numberOfStrokes.append(tempNumberOfStrokes)
+    numberOfStrokes.sort()
+    print(numberOfStrokes)
+    return numberOfStrokes[0]
 
 def main():
     holeLingth,numberOfClubs,clubLingths = getInput()
