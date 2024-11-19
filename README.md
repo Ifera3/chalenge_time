@@ -54,3 +54,42 @@ output
 ```
 Roberta wins in 3 strokes.
 ```
+
+## Third problem https://dmoj.ca/problem/ccc08j3
+## GPS menu key
+
+### description
+
+To enter a name you must move the cursor in the table starting at ```A```. Goal is to find out how many key inputs are required to enter a given name. 
+
+```
+| A | B | C | D | E | F |
+| G | H | I | J | K | L |
+| M | N | O | P | Q | R |
+| S | T | U | V | W | X |
+| Y | Z |   | - | . | enter |
+```
+
+### example one
+
+input
+```
+GPS
+```
+
+output
+```
+15
+```
+
+### example two
+
+input
+```
+ECHO ROCK
+```
+
+output
+```
+29
+```
