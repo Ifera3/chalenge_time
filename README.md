@@ -93,3 +93,50 @@ output
 ```
 29
 ```
+
+## Problem Four https://dmoj.ca/problem/ccc05s1
+## phone nymber translator
+
+### Description
+
+Get a phone number such as ```416-BUY-More``` and turn it into the number ```416-289-6673```. For phone numbers with more then 10 digits are reduces to only 10 digits
+
+```
+1
+2 - A, B, C
+3 - D, E, F
+4 - H, I, J
+5 - K, L, M
+6 - N, O, P
+7 - Q, R, S
+8 - T, U, V
+9 - W, X, Y, Z
+
+```
+
+### Input
+
+how many phone numbers
+
+What each phone number is
+
+```
+5
+88-SNOW-5555
+519-888-4567
+BUY-MORE-POP
+416-PIZZA-BOX
+5059381123
+```
+
+### Output
+
+Numbers for each of the phone numbers
+
+```
+887-669-5555
+519-888-4567
+289-667-3767
+416-749-9226
+505-938-1123
+```
