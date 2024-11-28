@@ -1,8 +1,9 @@
 #!Python 3
 
-x = input(': ')
+x = []
 
-if x.isalpha():
-    print('yes',x)
-else:
-    print('no',x)
+for i in range(3,15):
+    for suit in range(4):
+        x.append([i,suit])
+
+print(x)

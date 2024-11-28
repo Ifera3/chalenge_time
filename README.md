@@ -140,3 +140,20 @@ Numbers for each of the phone numbers
 416-749-9226
 505-938-1123
 ```
+
+## Problem Five 
+## Mary's Game
+
+### Description
+
+Card game played with one deck without 2s and jokers for 3 or 4 players and two decks for 5 to 7 players
+
+You get delt one card face up that decides how many cards you get
+
+Dealers face up card is the wild card for that round
+
+you play sets of three cards 
+
+cards played are point to you cards in your hand are points aganst you
+
+3 - 8 is 5 points, 9 - king is 10 points, Ace and Wild are 100 points

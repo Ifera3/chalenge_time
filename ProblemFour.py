@@ -15,7 +15,7 @@
 #887-669-5555
 
 def phoneTrans(phone):
-    table = [[],[],['A','B','C'],['D','E','F'],['G','H','I'],['J','K','L'],['M','N','O'],['P','Q','R','S'],['T','U','V'],['W','X','Y','Z']]
+    table = [['A','B','C'],['D','E','F'],['G','H','I'],['J','K','L'],['M','N','O'],['P','Q','R','S'],['T','U','V'],['W','X','Y','Z']]
     phoneNumber = ''
     digits = 0
     #print(phone)
@@ -27,10 +27,10 @@ def phoneTrans(phone):
             phoneNumber = phoneNumber + i
             digits = digits + 1
         elif i.isalpha():
-            for nummber in range(10):
+            for nummber in range(8):
                 #print(nummber, table[nummber])
                 if i in table[nummber]:
-                    phoneNumber = phoneNumber + str(nummber)
+                    phoneNumber = phoneNumber + str(nummber+2)
                     digits = digits + 1
                     break
         if digits == 10:
