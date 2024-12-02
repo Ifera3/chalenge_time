@@ -29,20 +29,32 @@ players = {
 }
 
 #functions
-
-def showNumaricalCard(cardNum):
+def showNumaricalCard(cardNum, noSuit = False, printCard = True):
     suit = ['Clubs', 'Dimands', 'Harts', 'Spades']
-    if cardNum[0] == 11:
-        card = f"Jack of {suit[cardNum[1]]}"
-    elif cardNum[0] == 12:
-        card = f"Queen of {suit[cardNum[1]]}"
-    elif cardNum[0] == 13:
-        card = f"King of {suit[cardNum[1]]}"
-    elif cardNum[0] == 14:
-        card = f"Ace of {suit[cardNum[1]]}"
+    if noSuit:
+        if cardNum == 11:
+            card = f"Jacks"
+        elif cardNum == 12:
+            card = f"Queens"
+        elif cardNum == 13:
+            card = f"Kings"
+        elif cardNum == 14:
+            card = f"Aces"
+        else:
+            card = f"{cardNum}s"
     else:
-        card = f"{cardNum[0]} of {suit[cardNum[1]]}"
-    print(card)
+        if cardNum[0] == 11:
+            card = f"Jack of {suit[cardNum[1]]}"
+        elif cardNum[0] == 12:
+            card = f"Queen of {suit[cardNum[1]]}"
+        elif cardNum[0] == 13:
+            card = f"King of {suit[cardNum[1]]}"
+        elif cardNum[0] == 14:
+            card = f"Ace of {suit[cardNum[1]]}"
+        else:
+            card = f"{cardNum[0]} of {suit[cardNum[1]]}"
+    if printCard:
+        print(card, end='  ')
     return card
 
 def deal(deck):
@@ -64,11 +76,52 @@ def deal(deck):
     print(wild)
     print(len(deck))
     return wild
-        
+
+def dealNumaricly(deck):
+    #print(len(deck))
+    random.shuffle(deck)
+    for player in players:
+        card = deck.pop(random.randrange(len(deck)))
+        players[player]['hand'].append(card)
+        players[player]['startCardNum'] = players[player]['hand'][0][0]
+        if players[player]['isDealer']:
+            wild = players[player]['hand'][0][0]
+    for player in players:
+        for i in range(players[player]['startCardNum'] - 1):
+            card = deck.pop(random.randrange(len(deck)))
+            players[player]['hand'].append(card)
+        players[player]['hand'].sort()
+        #print(len(players[player]['hand']),players[player]['startCardNum'])
+    #print(players)
+    #print(wild)
+    #print(len(deck))
+    return deck, wild
+
+def play(deck, wildCard):
+    for player in players:
+        print(f'\n{showNumaricalCard(wildCard, printCard=False, noSuit=True)} are wild.\n')
+        card = deck.pop(random.randrange(len(deck)))
+        players[player]['hand'].append(card)
+        players[player]['hand'].sort()
+        print(f"You picked up a {showNumaricalCard(card, printCard=False)}.\nYour hand:\n")
+        for card in players[player]['hand']:
+            showNumaricalCard(card)
+        print('\n')
+        isSet = []
+        for i in players[player]['hand']:
+            isSet.append(i[0])
+        for i in isSet:
+            if isSet.count(i) >= 3:
+                print(i)
+
+        print(isSet)
+
 
 def main():
     #3 player set
-    wild = deal(deckStanderd)
+    activeDeck, wildCard = dealNumaricly(deckNumaricly)
+    print(players)
+    play(activeDeck, wildCard)
 
 
 if __name__ == '__main__':
