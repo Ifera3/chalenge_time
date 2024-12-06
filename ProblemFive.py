@@ -28,18 +28,43 @@ players = {
     }
 }
 
+def becomeNumaricalCard(cardName):
+    cardName = cardName.lower()
+    cardName = cardName.split(' of ')
+    #print(cardName)
+    if cardName[0] == 'ace':
+        cardnum = 14
+    elif cardName[0] == 'king':
+        cardnum = 13
+    elif cardName[0] == 'queen':
+        cardnum = 12
+    elif cardName[0] == 'jack':
+        cardnum = 11
+    else:
+        cardnum = int(cardName[0])
+    if cardName[1] == 'clubs':
+        cardSiut = 0
+    elif cardName[1] == 'dimands':
+        cardSiut = 1
+    elif cardName[1] == 'harts':
+        cardSiut = 2
+    elif cardName[1] == 'spades':
+        cardSiut = 3
+    #print([cardnum, cardSiut])
+    return [cardnum, cardSiut]
+
 #functions
 def showNumaricalCard(cardNum, noSuit = False, printCard = True):
     suit = ['Clubs', 'Dimands', 'Harts', 'Spades']
     if noSuit:
         if cardNum == 11:
-            card = f"Jacks"
+            card = "Jacks"
         elif cardNum == 12:
-            card = f"Queens"
+            card = "Queens"
         elif cardNum == 13:
-            card = f"Kings"
+            card = "Kings"
         elif cardNum == 14:
-            card = f"Aces"
+            card = "Aces"
         else:
             card = f"{cardNum}s"
     else:
@@ -107,15 +132,24 @@ def play(deck, wildCard):
         for card in players[player]['hand']:
             showNumaricalCard(card)
         print('\n')
-        isSet = []
+        cardCount = {}
+        options = {'full set':[], 'wild set':[]}
         for i in players[player]['hand']:
-            isSet.append(i[0])
-        for i in isSet:
-            if isSet.count(i) >= 3:
-                print(i)
-
-        print(isSet)
-
+            if i[0] in cardCount:
+                cardCount[i[0]] = cardCount[i[0]] + 1
+            elif i[0] not in cardCount:
+                cardCount[i[0]] = 1
+        #print(cardCount, wildCard)
+        for i in cardCount:
+            if i != wildCard:
+                if cardCount[i] > 2:
+                    #print(i, '3')
+                    options['full set'].append(i)
+                if wildCard in cardCount:
+                    if 3 > cardCount[i] > 1:
+                        #print(i, 'wild 2')
+                        options['wild set'].append(i)
+        print(options)
 
 def main():
     #3 player set
