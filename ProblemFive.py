@@ -11,23 +11,24 @@ if __name__ == '__main__':
     deckNumaricly = [[3, 0], [3, 1], [3, 2], [3, 3], [4, 0], [4, 1], [4, 2], [4, 3], [5, 0], [5, 1], [5, 2], [5, 3], [6, 0], [6, 1], [6, 2], [6, 3], [7, 0], [7, 1], [7, 2], [7, 3], [8, 0], [8, 1], [8, 2], [8, 3], [9, 0], [9, 1], [9, 2], [9, 3], [10, 0], [10, 1], [10, 2], [10, 3], [11, 0], [11, 1], [11, 2], [11, 3], [12, 0], [12, 1], [12, 2], [12, 3], [13, 0], [13, 1], [13, 2], [13, 3], [14, 0], [14, 1], [14, 2], [14, 3]]
     discarded = []
     cardDeal = {'3':3, '4':4, '5':5, '6':6, '7':7, '8':8, '9':9, '10':10, 'Jack':11, 'Queen':12,'King':13, 'Ace':14}
-    numberOfPlayers = 2
-    players = {
-        'Player1' : {
-            'hand' : [],
-            'isDealer' : True,
-            'startCardNum' : 3,
-            'playedCards' : [],
-            'score' : 0
-        },
-        'Player2' : {
-            'hand' : [],
-            'isDealer' : False,
-            'startCardNum' : 3,
-            'playedCards' : [],
-            'score' : 0
-        }
-    }
+    #numberOfPlayers = 2
+    players = {}
+    """
+    inside players dictionary
+    'Player1' : {
+        'hand' : [],
+        'isDealer' : True,
+        'startCardNum' : 3,
+        'playedCards' : [],
+        'score' : 0
+    },
+    'Player2' : {
+        'hand' : [],
+        'isDealer' : False,
+        'startCardNum' : 3,
+        'playedCards' : [],
+        'score' : 0
+    }"""
 
 #functions
 def deal(deck):
@@ -175,7 +176,7 @@ def pickUpCard(player, deck, wildCard):
             pickUpCard = pickUpCard.strip()
             pickUpCard = pickUpCard.lower()
             #print(pickUpCard)
-            if pickUpCard == "can't pick up":
+            if pickUpCard == "can't pick up" or pickUpCard == "can't pick up":
                 #print('you did this')
                 card = deck.pop(random.randrange(len(deck)))
                 players[player]['hand'].append(card)
@@ -222,13 +223,16 @@ def opptions(player, wildCard, discard = False):
     if discard:
         for i in cardCount:
             if i != wildCard:
-                if cardCount[i] > 1:
+                if cardCount[i] >= 2:
                     #print(i, '3')
                     options['full set'].append(i)
                 if wildCard in cardCount:
-                    if 2 > cardCount[i] > 0:
+                    if cardCount[i] == 1:
                         #print(i, 'wild 2')
                         options['wild set'].append(i)
+        if wildCard in cardCount:
+            if len(options['wild set']) >= 3 and cardCount[wildCard] >= 2:
+                options['full set'].append(wildCard)
     else:
         for i in cardCount:
             if i != wildCard:
@@ -253,6 +257,18 @@ def cardPlay(player, deck, wildCard):
                 playedNum[i[0]] = playedNum[i[0]] + 1
             elif i[0] not in playedNum:
                 playedNum[i[0]] = 1
+        for difplayer in players:
+            for down in players[difplayer]['playedCards']:
+                if down[0] in playedNum:
+                    for cardplay in playedCards:
+                        if down[0] == cardplay[0]:
+                            killdex = players[player]['hand'].index(cardplay)
+                            players[player]['playedCards'].append(players[player]['hand'].pop(killdex))
+                            killdex = playedCards.index(cardplay)
+                            playedCards.pop(killdex)
+                            playedCards.insert(killdex, 'placeHolder')
+        while 'placeHolder' in playedCards:
+            playedCards.remove('place')
         for i in playedNum:
             #print(playedNum[i], i)
             if playedNum[i] >= 3 and i != wildCard:
@@ -261,9 +277,8 @@ def cardPlay(player, deck, wildCard):
                     #print(playedCards, cardplay)
                     if i == cardplay[0]:
                         #print(playedCards, cardplay)
-                        players[player]['playedCards'].append(cardplay)
                         killdex = players[player]['hand'].index(cardplay)
-                        deck.append(players[player]['hand'].pop(killdex))
+                        players[player]['playedCards'].append(players[player]['hand'].pop(killdex))
                         #print(playedCards, cardplay)
                 if wildCard in playedNum and i != wildCard:
                     playSet = input(f"Would you like to play your set of {showNumaricalCard(i, noSuit = True, printCard = False)}s with a wild {showNumaricalCard(wildCard,noSuit = True, printCard = False)} (y or n): ")
@@ -271,10 +286,9 @@ def cardPlay(player, deck, wildCard):
                         for cardplay in playedCards:
                             if wildCard == cardplay[0]:
                                 #print(playedCards, cardplay)
-                                players[player]['playedCards'].append(cardplay)
                                 #print(players[player]['playedCards'])
                                 killdex = players[player]['hand'].index(cardplay)
-                                deck.append(players[player]['hand'].pop(killdex))
+                                players[player]['playedCards'].append(players[player]['hand'].pop(killdex))
                                 killdex = playedCards.index(cardplay)
                                 playedCards.pop(killdex)
                                 #print(playedCards, cardplay)
@@ -286,17 +300,15 @@ def cardPlay(player, deck, wildCard):
                         #print(playedCards, cardplay, i)
                         if i == cardplay[0]:
                             #print(playedCards, cardplay)
-                            players[player]['playedCards'].append(cardplay)
                             killdex = players[player]['hand'].index(cardplay)
-                            deck.append(players[player]['hand'].pop(killdex))
+                            players[player]['playedCards'].append(players[player]['hand'].pop(killdex))
                             #print(playedCards, cardplay)
                     #print(players[player]['hand'],i)
                     for cardplay in playedCards:
                         if wildCard == cardplay[0]:
                             #print(playedCards, cardplay)
-                            players[player]['playedCards'].append(cardplay)
                             killdex = players[player]['hand'].index(cardplay)
-                            deck.append(players[player]['hand'].pop(killdex))
+                            players[player]['playedCards'].append(players[player]['hand'].pop(killdex))
                             killdex = playedCards.index(cardplay)
                             playedCards.pop(killdex)
                             #print(playedCards, cardplay)
@@ -370,13 +382,23 @@ def scoring(wildCard):
                 nextdealer = True
 
 def main():
-    #3 player set
     activeDeck, wildCard = dealNumaricly(deckNumaricly)
     print(players)
     play(activeDeck, wildCard)
     scoring(wildCard)
 
-
-
 if __name__ == '__main__':
-    main()
+    numberOfPlayers = ''
+    while type(numberOfPlayers) == str:
+        numberOfPlayers = input('how many players are playing?: ')
+        try:
+            numberOfPlayers = int(numberOfPlayers)
+        except:
+            print(f"{numberOfPlayers} in not a number.")
+    for i in range(numberOfPlayers):
+        players[f'Player{i+1}'] = {'hand' : [], 'isDealer' : False, 'startCardNum' : 3, 'playedCards' : [], 'score' : 0}
+    players['Player1']['isDealer'] = True
+    #print(players)
+    #input()
+    for repeat in range(2):
+        main()
