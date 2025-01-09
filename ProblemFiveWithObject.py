@@ -6,22 +6,21 @@
 import random
 
 #global varubals
-if __name__ == '__main__':
-    deckNumaricly = [[3, 0], [3, 1], [3, 2], [3, 3], [4, 0], [4, 1], [4, 2], [4, 3], [5, 0], [5, 1], [5, 2], [5, 3], [6, 0], [6, 1], [6, 2], [6, 3], [7, 0], [7, 1], [7, 2], [7, 3], [8, 0], [8, 1], [8, 2], [8, 3], [9, 0], [9, 1], [9, 2], [9, 3], [10, 0], [10, 1], [10, 2], [10, 3], [11, 0], [11, 1], [11, 2], [11, 3], [12, 0], [12, 1], [12, 2], [12, 3], [13, 0], [13, 1], [13, 2], [13, 3], [14, 0], [14, 1], [14, 2], [14, 3]]
-    discarded = []
-    players = []
+deckNumaricly = [[3, 0], [3, 1], [3, 2], [3, 3], [4, 0], [4, 1], [4, 2], [4, 3], [5, 0], [5, 1], [5, 2], [5, 3], [6, 0], [6, 1], [6, 2], [6, 3], [7, 0], [7, 1], [7, 2], [7, 3], [8, 0], [8, 1], [8, 2], [8, 3], [9, 0], [9, 1], [9, 2], [9, 3], [10, 0], [10, 1], [10, 2], [10, 3], [11, 0], [11, 1], [11, 2], [11, 3], [12, 0], [12, 1], [12, 2], [12, 3], [13, 0], [13, 1], [13, 2], [13, 3], [14, 0], [14, 1], [14, 2], [14, 3]]
+discarded = []
+players = []
 
-    class basePlayer:
-        def __init__(self, name, isDealer, hand, playedCards, startCardNum, score):
-            self.name = name
-            self.isDealer = isDealer
-            self.hand = hand
-            self.playedCards = playedCards
-            self.startCardNum = startCardNum
-            self.score = score
-        
-        def __str__(self):
-            return f"{self.name}, {self.isDealer}, {self.hand}, {self.playedCards}, {self.startCardNum}, {self.score}"
+class basePlayer:
+    def __init__(self, n, delr, s, h, p, score):
+        self.name = n
+        self.isDealer = delr
+        self.hand = h
+        self.playedCards = p
+        self.startCardNum = s
+        self.score = score
+    
+    def __str__(self):
+        return f"name {self.name}, isDealer {self.isDealer}, hand {self.hand}, playedCards {self.playedCards}, startCardNum {self.startCardNum}, score {self.score}"
 
 #functions
 def becomeNumaricalCard(cardName):
@@ -30,23 +29,23 @@ def becomeNumaricalCard(cardName):
     cardName[0] = cardName[0].strip()
     cardName[1] = cardName[1].strip()
     #print(cardName)
-    if cardName[0] == 'ace':
+    if cardName[0] == 'ace' or cardName[0] == 'a':
         cardnum = 14
-    elif cardName[0] == 'king':
+    elif cardName[0] == 'king' or cardName[0] == 'k':
         cardnum = 13
-    elif cardName[0] == 'queen':
+    elif cardName[0] == 'queen' or cardName[0] == 'q':
         cardnum = 12
-    elif cardName[0] == 'jack':
+    elif cardName[0] == 'jack' or cardName[0] == 'j':
         cardnum = 11
     else:
         cardnum = int(cardName[0])
-    if cardName[1] == 'clubs':
+    if cardName[1] == 'clubs' or cardName[1] == 'c':
         cardSiut = 0
-    elif cardName[1] == 'dimands':
+    elif cardName[1] == 'dimands' or cardName[1] == 'd':
         cardSiut = 1
-    elif cardName[1] == 'harts':
+    elif cardName[1] == 'harts' or cardName[1] == 'h':
         cardSiut = 2
-    elif cardName[1] == 'spades':
+    elif cardName[1] == 'spades' or cardName[1] == 's':
         cardSiut = 3
     #print([cardnum, cardSiut])
     return [cardnum, cardSiut]
@@ -81,23 +80,28 @@ def showNumaricalCard(cardNum, noSuit = False, printCard = True):
 
 def dealNumaricly():
     #print(len(deck))
+    deck = []
+    dealtRounds = 0
     for i in range(int(numberOfPlayers/3)+1):
-        
-        deck = deckNumaricly
+        deck.extend(deckNumaricly)
     random.shuffle(deck)
     for player in players:
         card = deck.pop(random.randrange(len(deck)))
-        player.hand.append(card)
+        player.hand = [card]
+        player.playedCards = []
         player.startCardNum = player.hand[0][0]
         if player.isDealer:
-            wild = player.hand[0][0]
-    for player in players:
-        print(player, 'hi')
-        for i in range(player.startCardNum - 1):
-            card = deck.pop(random.randrange(len(deck)))
-            player.hand.append(card)
-        print(player)
-        player.hand.sort()
+            wild = player.startCardNum
+        if player.startCardNum > dealtRounds:
+            dealtRounds = player.startCardNum
+    for round in range(1, dealtRounds):
+        for player in players:
+            if player.startCardNum > round:
+                #print(player, 'round', round)
+                card = deck.pop(random.randrange(len(deck)))
+                player.hand.append(card)
+                #print(player, "hand size", len(player.hand))
+                player.hand.sort()
     #print(players)
     #print(wild)
     #print(len(deck))
@@ -152,7 +156,7 @@ def pickUpCard(player, deck, wildCard):
             pickUpCard = pickUpCard.strip()
             pickUpCard = pickUpCard.lower()
             #print(pickUpCard)
-            if pickUpCard == "can't pick up" or pickUpCard == "can't pick up":
+            if pickUpCard == "can't pick up" or pickUpCard == "no":
                 #print('you did this')
                 card = deck.pop(random.randrange(len(deck)))
                 player.hand.append(card)
@@ -171,6 +175,7 @@ def pickUpCard(player, deck, wildCard):
                         print(f"You picked up a {showNumaricalCard(discarded[i], printCard=False)}.\n")
                         player.hand.append(discarded.pop(i))
                         discarded.insert(i,'place holder')
+                player.hand.sort()
             else:
                 #print(pickUpCard, discarded)
                 card = deck.pop(random.randrange(len(deck)))
@@ -186,6 +191,7 @@ def pickUpCard(player, deck, wildCard):
         player.hand.append(card)
         player.hand.sort()
         print(f"You picked up a {showNumaricalCard(card, printCard=False)}.\n")
+    player.hand.sort()
 
 def opptions(player, wildCard, discard = False):
     cardCount = {}
@@ -244,7 +250,7 @@ def cardPlay(player, deck, wildCard):
                             playedCards.pop(killdex)
                             playedCards.insert(killdex, 'placeHolder')
         while 'placeHolder' in playedCards:
-            playedCards.remove('place')
+            playedCards.remove('placeHolder')
         for i in playedNum:
             #print(playedNum[i], i)
             if playedNum[i] >= 3 and i != wildCard:
@@ -309,61 +315,62 @@ def smallestHand():
             small = len(player.hand)
     return small
 
-def play(deck, wildCard):
+def scoring(wildCard):
+    nextdealer = False
+    for player in players:
+        roundscore = 0
+        for downCard in player.playedCards:
+            if downCard[0] == wildCard or downCard[0] == 14:
+                roundscore = roundscore + 100
+            elif downCard[0] <= 8 and downCard[0] != wildCard:
+                roundscore = roundscore + 5
+            elif 9 <= downCard[0] <= 13 and downCard[0] != wildCard:
+                roundscore = roundscore + 10
+        for heldCard in player.hand:
+            if heldCard[0] == wildCard or heldCard[0] == 14:
+                roundscore = roundscore - 100
+            elif heldCard[0] <= 8 and heldCard[0] != wildCard:
+                roundscore = roundscore - 5
+            elif 9 <= heldCard[0] <= 13 and heldCard[0] != wildCard:
+                roundscore = roundscore - 10
+        player.score = player.score + roundscore
+        print(f"\n{player.name} scored {roundscore} this round and {player.score} in total.")
+        if player.isDealer:
+            player.isDealer = False
+            if players.index(player) == (len(players) - 1):
+                players[0].isDealer = True
+            else:
+                nextdealer = True
+        else:
+            if nextdealer:
+                player.isDealer = True
+                nextdealer = False
+        
+
+def play():
+    activeDeck, wildCard = dealNumaricly()
     while smallestHand() > 0:
         for player in players:
             print("Your hand:\n")
             for card in player.hand:
                 showNumaricalCard(card)
             print('\n')
-            pickUpCard(player, deck, wildCard)
+            pickUpCard(player, activeDeck, wildCard)
             print("Your hand:\n")
             for card in player.hand:
                 showNumaricalCard(card)
             print('\n')
             #print(opptions(player, wildCard), '\n')
-            deck = cardPlay(player, deck, wildCard)
+            activeDeck = cardPlay(player, activeDeck, wildCard)
             #print(players[player]['hand'])
             discard(player)
             #print(players[player]['hand'])
-
-def scoring(wildCard):
-    score = 0
-    nextdealer = False
-    for player in players:
-        if nextdealer:
-            player.isDealer = True
-            nextdealer = False
-        for downCard in player.playedCards:
-            if downCard[0] == wildCard or downCard[0] == 14:
-                score = score + 100
-            elif downCard[0] < 9:
-                score = score + 5
-            elif 8 < downCard[0] < 14:
-                score = score + 10
-        for heldCard in player.hand:
-            if heldCard[0] == wildCard or heldCard[0] == 14:
-                score = score - 100
-            elif heldCard[0] < 9:
-                score = score - 5
-            elif 8 < heldCard[0] < 14:
-                score = score - 10
-        player.score = player.score + score
-        print(f"{player} scored {score} this round and {player.score} in total")
-        if player.isDealer:
-            if players.index(player) == (len(players) - 1):
-                players[0].isDealer = True
-            else:
-                player.isDealer = False
-                nextdealer = True
+            if smallestHand() == 0:
+                scoring(wildCard)
+                return
 
 def main():
-    activeDeck, wildCard = dealNumaricly()
-    print(players)
-    play(activeDeck, wildCard)
-    scoring(wildCard)
-
-if __name__ == '__main__':
+    global numberOfPlayers
     numberOfPlayers = ''
     while type(numberOfPlayers) == str:
         numberOfPlayers = input('how many players are playing?: ')
@@ -376,9 +383,19 @@ if __name__ == '__main__':
             deal = True
         else:
             deal = False
-        players.append(basePlayer(input(f"Enter the name of player {i + 1}: "), deal, [], [], 3, 0))
+        #(self, name, dealer, start num, hand, played, score)
+        players.append(basePlayer(input(f"Enter the name of player {i + 1}: "), deal, 3, [], [], 0))
     #for i in players:
     #    print(i)
     #input()
-    for repeat in range(2):
-        main()
+    play()
+    playagian = ''
+    while playagian != "y" and playagian != "n":
+        playagian = input("would you like to play another round with the same players? (y or n): ")
+    while playagian == "y":
+        play()
+        while playagian != "y" and playagian != "n":
+            playagian = input("would you like to play another round with the same players? (y or n): ")
+
+if __name__ == '__main__':
+    main()
