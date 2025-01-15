@@ -7,7 +7,6 @@ import random
 
 #global varubals
 deckNumaricly = [[3, 0], [3, 1], [3, 2], [3, 3], [4, 0], [4, 1], [4, 2], [4, 3], [5, 0], [5, 1], [5, 2], [5, 3], [6, 0], [6, 1], [6, 2], [6, 3], [7, 0], [7, 1], [7, 2], [7, 3], [8, 0], [8, 1], [8, 2], [8, 3], [9, 0], [9, 1], [9, 2], [9, 3], [10, 0], [10, 1], [10, 2], [10, 3], [11, 0], [11, 1], [11, 2], [11, 3], [12, 0], [12, 1], [12, 2], [12, 3], [13, 0], [13, 1], [13, 2], [13, 3], [14, 0], [14, 1], [14, 2], [14, 3]]
-discarded = []
 players = []
 playSingleCard = []
 
@@ -106,7 +105,8 @@ def dealNumaricly():
     #print(players)
     #print(wild)
     #print(len(deck))
-    discarded.append(deck.pop(random.randrange(len(deck))))
+    global discarded
+    discarded = [deck.pop(random.randrange(len(deck)))]
     return deck, wild
 
 def cardsPlayable(player, discard = False):
@@ -117,7 +117,7 @@ def cardsPlayable(player, discard = False):
         if discard:
             pleyedCards = input("Enter the card you are discarding (eg: 8 of Dimands): ")
         else:
-            pleyedCards = input("enter the cards you are playing in a list with comas to seprate them (eg: 3 of Harts, 3 of Clubs, 3 of Spades)\n If you can't play any sets of three cards enter No Sets: ")
+            pleyedCards = input("Enter the cards you are playing in a list with comas to seprate them (eg: 3 of Harts, 3 of C, 3ofS)\nIf you can't play any sets of three cards enter No Sets: ")
         pleyedCards = pleyedCards.strip()
         pleyedCards = pleyedCards.lower()
         if pleyedCards == 'no sets':
@@ -152,17 +152,18 @@ def pickUpCard(player, deck, wildCard):
             showNumaricalCard(card)
         pickUpCard = ''
         while type(pickUpCard) == str:
-            pickUpCard = input("\n\nEnter the card you would like to pick up: ")
+            pickUpCard = input("\n\nEnter the card you would like to pick up\nEnter no cards if you can't or don't want to pick up from discard: ")
             pickUpCard = pickUpCard.strip()
             pickUpCard = pickUpCard.lower()
             #print(pickUpCard)
-            if pickUpCard == "can't pick up" or pickUpCard == "no":
+            if pickUpCard == "no cards" or pickUpCard == "no":
                 #print('you did this')
                 card = deck.pop(random.randrange(len(deck)))
                 player.hand.append(card)
                 player.hand.sort()
                 print(f"\nYou picked up a {showNumaricalCard(card, printCard=False)}.\n")
-                return 
+                player.hand.sort()
+                return None
             try:
                 pickUpCard = becomeNumaricalCard(pickUpCard)
             except:
@@ -174,7 +175,7 @@ def pickUpCard(player, deck, wildCard):
                         for i in range(len(discarded)):
                             #print(i, pickUpAbove, discarded)
                             if i >= pickUpAbove:
-                                print(f"You picked up a {showNumaricalCard(discarded[i], printCard=False)}.\n")
+                                print(f"\nYou picked up a {showNumaricalCard(discarded[i], printCard=False)}.\n")
                                 player.hand.append(discarded.pop(i))
                                 discarded.insert(i,'place holder')
                         player.hand.sort()
@@ -183,7 +184,7 @@ def pickUpCard(player, deck, wildCard):
                     for i in range(len(discarded)):
                         #print(i, pickUpAbove, discarded)
                         if i >= pickUpAbove:
-                            print(f"You picked up a {showNumaricalCard(discarded[i], printCard=False)}.\n")
+                            print(f"\nYou picked up a {showNumaricalCard(discarded[i], printCard=False)}.\n")
                             player.hand.append(discarded.pop(i))
                             discarded.insert(i,'place holder')
                     player.hand.sort()
@@ -192,8 +193,7 @@ def pickUpCard(player, deck, wildCard):
                 card = deck.pop(random.randrange(len(deck)))
                 player.hand.append(card)
                 player.hand.sort()
-                print(f"You picked up a {showNumaricalCard(card, printCard=False)}.\n")
-                break
+                print(f"\nYou picked up a {showNumaricalCard(card, printCard=False)}.\n")
         while 'place holder' in discarded:
             discarded.remove('place holder')
     else:
@@ -201,8 +201,9 @@ def pickUpCard(player, deck, wildCard):
         card = deck.pop(random.randrange(len(deck)))
         player.hand.append(card)
         player.hand.sort()
-        print(f"You picked up a {showNumaricalCard(card, printCard=False)}.\n")
+        print(f"\nYou picked up a {showNumaricalCard(card, printCard=False)}.\n")
     player.hand.sort()
+    return None
 
 def opptions(player, wildCard, discard = False):
     cardCount = {}
@@ -272,7 +273,7 @@ def cardPlay(player, deck, wildCard):
                         if cardplay[0] not in playSingleCard:
                             playSingleCard.append(cardplay[0])
                         #print(playedCards, cardplay)
-                if wildCard in playedNum and i != wildCard:
+                if wildCard in playedNum and i != wildCard and playedNum[wildCard] > 0:
                     playSet = input(f"Would you like to play your set of {showNumaricalCard(i, noSuit = True, printCard = False)}s with a wild {showNumaricalCard(wildCard,noSuit = True, printCard = False)} (y or n): ")
                     if playSet == 'y' or playSet == 'Y':
                         for cardplay in playedCards:
@@ -283,11 +284,11 @@ def cardPlay(player, deck, wildCard):
                                 player.playedCards.append(player.hand.pop(killdex))
                                 killdex = playedCards.index(cardplay)
                                 playedCards.pop(killdex)
-                                playedNum[cardplay[0]] -= 1
-                                print(playedNum)
+                                playedNum[wildCard] -= 1
+                                #print(playedNum)
                                 #print(playedCards, cardplay)
                                 break
-            elif playedNum[i] >= 2 and wildCard in playedNum and wildCard != i:
+            elif playedNum[i] >= 2 and wildCard in playedNum and wildCard != i and playedNum[wildCard] > 0:
                 playSet = input(f"Would you like to play your set of {showNumaricalCard(i, noSuit = True, printCard = False)}s with a wild {showNumaricalCard(wildCard, noSuit = True, printCard = False)} (y or n): ")
                 if playSet == 'y' or playSet == 'Y':
                     for cardplay in playedCards:
@@ -307,8 +308,8 @@ def cardPlay(player, deck, wildCard):
                             player.playedCards.append(player.hand.pop(killdex))
                             killdex = playedCards.index(cardplay)
                             playedCards.pop(killdex)
-                            playedNum[cardplay[0]] -= 1
-                            print(playedNum)
+                            playedNum[wildCard] -= 1
+                            #print(playedNum)
                             #print(playedCards, cardplay)
                             break
             #print(safty, len(players[player]['hand']))
@@ -361,7 +362,6 @@ def scoring(wildCard):
             if nextdealer:
                 player.isDealer = True
                 nextdealer = False
-        
 
 def play():
     activeDeck, wildCard = dealNumaricly()
@@ -374,16 +374,24 @@ def play():
             print('\n')
             pickUpCard(player, activeDeck, wildCard)
             print(f'{showNumaricalCard(wildCard, printCard=False, noSuit=True)}s are wild.\n')
-            if len(player.playedCards) >= 3:
+            if len(player.playedCards) > 2:
+                print("Played cards to play on: ")
                 for card in playSingleCard:
-                    showNumaricalCard(card, noSuit=True, printCard=False)
-            print(f"\n{player.name}'s hand:\n")
+                    print(f"{showNumaricalCard(card, noSuit=True, printCard=False)}s", end='')
+                    if playSingleCard.index(card) != len(playSingleCard) - 1:
+                        print(", ", end='')
+                print('\n')
+            print(f"{player.name}'s hand:\n")
             for card in player.hand:
                 showNumaricalCard(card)
             print('\n')
             #print(opptions(player, wildCard), '\n')
             activeDeck = cardPlay(player, activeDeck, wildCard)
             #print(players[player]['hand'])
+            print(f"\n{player.name}'s hand:\n")
+            for card in player.hand:
+                showNumaricalCard(card)
+            print('\n')
             discard(player)
             #print(players[player]['hand'])
             if smallestHand() == 0:
