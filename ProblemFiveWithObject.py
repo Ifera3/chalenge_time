@@ -120,7 +120,7 @@ def cardsPlayable(player, discard = False):
             pleyedCards = input("Enter the cards you are playing in a list with comas to seprate them (eg: 3 of Harts, 3 of C, 3ofS)\nIf you can't play any sets of three cards enter No Sets: ")
         pleyedCards = pleyedCards.strip()
         pleyedCards = pleyedCards.lower()
-        if pleyedCards == 'no sets':
+        if pleyedCards == 'no sets' or pleyedCards == 'no':
             return 'no sets'
         #print(pleyedCards)
         pleyedCards = pleyedCards.split(',')
@@ -168,18 +168,9 @@ def pickUpCard(player, deck, wildCard):
                 pickUpCard = becomeNumaricalCard(pickUpCard)
             except:
                 print(f"{pickUpCard} is not in the discard pile.\n")
-            if pickUpCard[0] in posibilitys['full set'] or pickUpCard[0] in posibilitys['wild set']:
-                if pickUpCard[0] == wildCard:
-                    if len(posibilitys['full set']) + len(posibilitys['wild set']) >= 3:
-                        pickUpAbove = discarded.index(pickUpCard)
-                        for i in range(len(discarded)):
-                            #print(i, pickUpAbove, discarded)
-                            if i >= pickUpAbove:
-                                print(f"\nYou picked up a {showNumaricalCard(discarded[i], printCard=False)}.\n")
-                                player.hand.append(discarded.pop(i))
-                                discarded.insert(i,'place holder')
-                        player.hand.sort()
-                else:
+        if pickUpCard[0] in posibilitys['full set'] or pickUpCard[0] in posibilitys['wild set']:
+            if pickUpCard[0] == wildCard:
+                if len(posibilitys['full set']) + len(posibilitys['wild set']) >= 3:
                     pickUpAbove = discarded.index(pickUpCard)
                     for i in range(len(discarded)):
                         #print(i, pickUpAbove, discarded)
@@ -189,11 +180,20 @@ def pickUpCard(player, deck, wildCard):
                             discarded.insert(i,'place holder')
                     player.hand.sort()
             else:
-                #print(pickUpCard, discarded)
-                card = deck.pop(random.randrange(len(deck)))
-                player.hand.append(card)
+                pickUpAbove = discarded.index(pickUpCard)
+                for i in range(len(discarded)):
+                    #print(i, pickUpAbove, discarded)
+                    if i >= pickUpAbove:
+                        print(f"\nYou picked up a {showNumaricalCard(discarded[i], printCard=False)}.\n")
+                        player.hand.append(discarded.pop(i))
+                        discarded.insert(i,'place holder')
                 player.hand.sort()
-                print(f"\nYou picked up a {showNumaricalCard(card, printCard=False)}.\n")
+        else:
+            #print(pickUpCard, discarded)
+            card = deck.pop(random.randrange(len(deck)))
+            player.hand.append(card)
+            player.hand.sort()
+            print(f"\nYou picked up a {showNumaricalCard(card, printCard=False)}.\n")
         while 'place holder' in discarded:
             discarded.remove('place holder')
     else:
@@ -422,6 +422,7 @@ def main():
     while playagian != "y" and playagian != "n":
         playagian = input("would you like to play another round with the same players? (y or n): ")
     while playagian == "y":
+        playagian = "n"
         play()
         while playagian != "y" and playagian != "n":
             playagian = input("would you like to play another round with the same players? (y or n): ")
