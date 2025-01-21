@@ -69,7 +69,7 @@ def main():
         if not table[y][x].ismine:
             table[y][x].ismine = True
             mines += 1
-    showMap()
+    showMap() #
 
 
 if __name__ == "__main__":
