@@ -7,7 +7,9 @@ import random
 table = [[],[],[],[],[],[],[],[]]
 class square:
     ismine = False
-    isSeen = True
+    isSeen = False
+    isFlaged = False
+    hasPlayer = False
     check = []
     agMines = 0
 
@@ -16,6 +18,13 @@ class square:
             for i in self.check:
                 if table[self.row+i[0]][self.coloum+i[1]].ismine:
                     self.agMines += 1
+
+    def getSeen(self):
+        if not self.isSeen:
+            self.isSeen = True
+            if self.agMines == 0 and not self.ismine:
+                for i in self.check:
+                    table[self.row+i[0]][self.coloum+i[1]].getSeen()
 
     def __init__(self, x, y):
         #print(x, y)
@@ -42,17 +51,47 @@ class square:
         #print(self.check)
     
     def __str__(self):
-        if self.isSeen:
-            if self.ismine:
-                return "[\033[0;31;40mM\033[0;37;40m]"
+        if self.hasPlayer:
+            if self.isSeen:
+                if self.isFlaged:
+                    return "(\033[0;31;40m!\033[0;37;40m)"
+                elif self.ismine and not self.isFlaged:
+                    return "(\033[0;31;40mM\033[0;37;40m)"
+                else:
+                    if self.agMines != 0:
+                        return f"(\033[0;36;40m{self.agMines}\033[0;37;40m)"
+                    else:
+                        return "( )"
             else:
-                return f"[{self.agMines}]"
+                if random.randrange(-1,1) == 0:
+                    return "(/)"
+                else:
+                    return "(\)"
         else:
-            return f"[ ]"
+            if self.isSeen:
+                if self.isFlaged:
+                    return "[\033[0;31;40m!\033[0;37;40m]"
+                elif self.ismine and not self.isFlaged:
+                    return "[\033[0;31;40mM\033[0;37;40m]"
+                else:
+                    if self.agMines != 0:
+                        return f"[\033[0;36;40m{self.agMines}\033[0;37;40m]"
+                    else:
+                        return "[ ]"
+            else:
+                if random.randrange(-1,1) == 0:
+                    return "[/]"
+                else:
+                    return "[\]"
 
 def showMap():
-    for i in table:
-        for s in i:
+    print("  ", end="")
+    for i in range(len(table[0])):
+        print(f" {i+1} ", end="")
+    print()
+    for i in range(len(table)):
+        print(f"{i+1} ", end='')
+        for s in table[i]:
             s.getNum()
             print(s, end='')
         print('')
@@ -62,14 +101,17 @@ def main():
         for x in range(8):
             table[y].append(square(x, y))
     #input()
-    mines = 0
-    while mines < 10:
+    mines = []
+    while len(mines) < 10:
         x = random.randrange(0,8)
         y = random.randrange(0,8)
         if not table[y][x].ismine:
             table[y][x].ismine = True
-            mines += 1
-    showMap() #
+            mines.append([x,y])
+    showMap()
+    table[0][0].hasPlayer = True
+    table[0][0].getSeen()
+    showMap()
 
 
 if __name__ == "__main__":
