@@ -4,9 +4,16 @@
 import random
 
 #global varubules and classes
-printLater = []
-squaresleft = 54
-table = [[],[],[],[],[],[],[],[]]
+#printLater = []
+letters = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z']
+table = []
+mines = []
+falseFlagedSquares = []
+flaged = 0
+width = 26
+hight = 26
+totalMines = 100
+squaresleft = (width * hight) - totalMines
 class square:
     ismine = False
     isSeen = False
@@ -22,14 +29,25 @@ class square:
                     self.agMines += 1
                     #printLater.append((i, self.agMines))
 
+    def forceDestroy(self):
+        agFlags = 0
+        if not self.ismine and not self.isFlaged and self.isSeen:
+            for i in self.check:
+                if table[self.row+i[0]][self.coloum+i[1]].isFlaged:
+                    agFlags += 1
+            if agFlags == self.agMines:
+                for i in self.check:
+                    table[self.row+i[0]][self.coloum+i[1]].getSeen()
+
     def getSeen(self):
         global squaresleft
         if not self.isSeen:
             self.isSeen = True
-            squaresleft -= 1
+            if not self.isFlaged:
+                squaresleft -= 1
             if self.ismine and not self.isFlaged:
                 loss()
-            elif self.agMines == 0 and not self.ismine:
+            elif self.agMines == 0 and not self.ismine and not self.isFlaged:
                 for i in self.check:
                     table[self.row+i[0]][self.coloum+i[1]].getSeen()
 
@@ -39,19 +57,19 @@ class square:
         self.row = y
         if self.row == 0 and self.coloum == 0:
             self.check = [[0,1],[1,0],[1,1]]
-        elif self.row == 0 and self.coloum == 7:
+        elif self.row == 0 and self.coloum == (width-1):
             self.check = [[0,-1],[1,-1],[1,0]]
-        elif self.row == 7 and self.coloum == 0:
+        elif self.row == (hight-1) and self.coloum == 0:
             self.check = [[-1,0],[-1,1],[0,1]]
-        elif self.row == 7 and self.coloum == 7:
+        elif self.row == (hight-1) and self.coloum == (width-1):
             self.check = [[-1,-1],[-1,0],[0,-1]]
-        elif self.row == 0 and self.coloum != 0 and self.coloum != 7:
+        elif self.row == 0 and self.coloum != 0 and self.coloum != (width-1):
             self.check = [[0,-1],[0,1],[1,-1],[1,0],[1,1]]
-        elif self.row == 7 and self.coloum != 0 and self.coloum != 7:
+        elif self.row == (hight-1) and self.coloum != 0 and self.coloum != (width-1):
             self.check = [[-1,-1],[-1,0],[-1,1],[0,-1],[0,1]]
-        elif self.coloum == 0 and self.row != 0 and self.row != 7:
+        elif self.coloum == 0 and self.row != 0 and self.row != (hight-1):
             self.check = [[-1,0],[-1,1],[0,1],[1,0],[1,1]]
-        elif self.coloum == 7 and self.row != 0 and self.row != 7:
+        elif self.coloum == (width-1) and self.row != 0 and self.row != (hight-1):
             self.check = [[-1,-1],[-1,0],[0,-1],[1,-1],[1,0]]
         else:
             self.check = [[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,-1],[1,0],[1,1]]
@@ -70,10 +88,10 @@ class square:
             elif self.isFlaged:
                     return "(\033[0;31;40m!\033[0;37;40m)"
             else:
-                if random.randrange(-1,1) == 0:
-                    return "(/)"
+                if random.randrange(0,2) == 0:
+                    return "\033[0;32;40m(/)\033[0;37;40m"
                 else:
-                    return "(\)"
+                    return "\033[0;32;40m(\)\033[0;37;40m"
         else:
             if self.isSeen:
                 if self.isFlaged:
@@ -86,13 +104,16 @@ class square:
                     else:
                         return "[ ]"
             else:
-                if random.randrange(-1,1) == 0:
+                if random.randrange(0,2) == 0:
                     return "[/]"
                 else:
                     return "[\]"
 
 def showMap():
-    print("\n   A  B  C  D  E  F  G  H ")
+    print('  ', end='')
+    for i in range(width):
+        print(f" {letters[i].upper()} ", end='')
+    print()
     for i in range(len(table)):
         print(f"{i+1} ", end='')
         for s in table[i]:
@@ -100,39 +121,65 @@ def showMap():
         print('')
 
 def loss():
-    print("\033[0;31;40m")
+    #print("\033[0;31;40m")
+    for i in mines:
+        table[i[0]][i[1]].isFlaged = False
+        table[i[0]][i[1]].getSeen()
+    #print(falseFlagedSquares)
+    for i in falseFlagedSquares:
+        table[i[0]][i[1]] = "\033[0;33;40m[X]\033[0;37;40m"
+        #print(table[i[0]][i[1]])
     showMap()
-    print('you lose')
+    print('\033[0;31;40m         YOU LOSE\033[0;37;40m')
     exit()
 
 def checkLocation():
+    global flaged
     cord = ""
-    letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
     while type(cord) == str:
         cord = input("enter the cords of the square you would like to check or flage(eg. A, 2): ")
         if ',' in cord:
             cord = cord.split(',')
-            for i in cord:
-                i = i.strip()
-                i = i.lower() 
+            for i in range(2):
+                cord[i] = cord[i].strip()
+                cord[i] = cord[i].lower()
+                #print(cord[i]) 
             if cord[0] in letters:
                 cord[0] = letters.index(cord[0])
-                if cord[1].isdigit():
-                    cord[1] = int(cord[1])
-                    if 0 < cord[1] < 9:
-                        cord[1] -= 1
-                        if not table[cord[1]][cord[0]].isSeen:
-                            table[cord[1]][cord[0]].hasPlayer = True
-                            showMap()
-                            flag = input("would you like to place a flage or break the square(f or b): ")
-                            if flag.lower() == 'f':
-                                table[cord[1]][cord[0]].isFlaged = True
-                                table[cord[1]][cord[0]].getSeen()
-                            elif flag.lower() == 'b':
-                                table[cord[1]][cord[0]].getSeen()
+                print(cord[0])
+                if 0 <= cord[0] < width:
+                    if cord[1].isdigit():
+                        cord[1] = int(cord[1])
+                        if 0 < cord[1] <= hight:
+                            cord[1] -= 1
+                            activesquare = table[cord[1]][cord[0]]
+                            if activesquare.isSeen:
+                                if activesquare.isFlaged:
+                                    flag = input("Would you like to remove the flag?(y or n): ")
+                                    if flag.lower() == 'y':
+                                        activesquare.isFlaged = False
+                                        activesquare.isSeen = False
+                                        flaged -= 1
+                                        if [cord[1],cord[0]] in falseFlagedSquares:
+                                            falseFlagedSquares.remove([cord[1],cord[0]])
+                                elif activesquare.agMines != 0:
+                                    activesquare.forceDestroy()
                             else:
-                                cord = ''
-                            table[cord[1]][cord[0]].hasPlayer = False
+                                activesquare.hasPlayer = True
+                                showMap()
+                                flag = input("Would you like to place a flage or break the square?(f or b): ")
+                                if flag.lower() == 'f':
+                                    activesquare.isFlaged = True
+                                    flaged += 1
+                                    #print(activesquare.ismine)
+                                    if not activesquare.ismine:
+                                        falseFlagedSquares.append([cord[1],cord[0]])
+                                    activesquare.getSeen()
+                                elif flag.lower() == 'b':
+                                    activesquare.getSeen()
+                                else:
+                                    cord = ''
+                                activesquare.hasPlayer = False
                         else:
                             cord = ''
                     else:
@@ -144,28 +191,30 @@ def checkLocation():
 
 
 def main():
-    for y in range(8):
-        for x in range(8):
+    for y in range(hight):
+        table.append([])
+        for x in range(width):
             table[y].append(square(x, y))
     #input()
     global mines
-    mines = 0
-    while mines < 10:
-        x = random.randrange(0,8)
-        y = random.randrange(0,8)
+    while len(mines) < totalMines:
+        x = random.randrange(0,width)
+        y = random.randrange(0,hight)
         if not table[y][x].ismine:
             table[y][x].ismine = True
-            mines += 1
+            mines.append([y,x])
     for i in table:
         for s in i:
             s.getNum()
-    showMap()
     #table[0][0].hasPlayer = True
     #table[7][7].getSeen()
     while squaresleft > 0:
-        checkLocation()
-        print(squaresleft)
+        print(f"{flaged} / 10")
         showMap()
+        checkLocation()
+    print(f"{flaged} / 10", squaresleft)
+    showMap()
+    checkLocation()
 
 
 if __name__ == "__main__":
