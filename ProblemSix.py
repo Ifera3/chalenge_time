@@ -5,14 +5,14 @@ import random
 
 #global varubules and classes
 #printLater = []
-letters = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z']
+letters = 'abcdefghijklmnopqrstuvwxyz1234567890@#$%^&*-+=_<>`~'
 table = []
 mines = []
 falseFlagedSquares = []
 flaged = 0
-width = 26
-hight = 26
-totalMines = 100
+width = 51
+hight = 3
+totalMines = int((width * hight)/4.9)
 squaresleft = (width * hight) - totalMines
 class square:
     ismine = False
@@ -109,18 +109,24 @@ class square:
                 else:
                     return "[\]"
 
+
+#functions
 def showMap():
-    print('  ', end='')
+    #shows the board
+    #creates lables by itrating throgh the size table[0]
+    #prints squares by printing their __str__ method
+    print('   ', end='')
     for i in range(width):
         print(f" {letters[i].upper()} ", end='')
     print()
     for i in range(len(table)):
-        print(f"{i+1} ", end='')
+        print(f"{i+1:<2} ", end='')
         for s in table[i]:
             print(s, end='')
         print('')
 
 def loss():
+    #shows all mines and what flages were wrong
     #print("\033[0;31;40m")
     for i in mines:
         table[i[0]][i[1]].isFlaged = False
@@ -130,7 +136,7 @@ def loss():
         table[i[0]][i[1]] = "\033[0;33;40m[X]\033[0;37;40m"
         #print(table[i[0]][i[1]])
     showMap()
-    print('\033[0;31;40m         YOU LOSE\033[0;37;40m')
+    print('\n\033[0;31;40mYOU LOSE\033[0;37;40m\n')
     exit()
 
 def checkLocation():
@@ -209,12 +215,11 @@ def main():
     #table[0][0].hasPlayer = True
     #table[7][7].getSeen()
     while squaresleft > 0:
-        print(f"{flaged} / 10")
+        print(f"{flaged} / {totalMines}")
         showMap()
         checkLocation()
-    print(f"{flaged} / 10", squaresleft)
+    print(f"{flaged} / {totalMines}")
     showMap()
-    checkLocation()
 
 
 if __name__ == "__main__":
