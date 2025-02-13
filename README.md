@@ -167,3 +167,11 @@ create table of 8 x 8 with 10 mines
 
 intracted squares explod if mine or show number of mines agasent to them
 
+## Problem Seven
+## remake my batleship game with dicionarys and classes
+
+### Goals
+
+will still run with tekinter
+
+be smaller and easry to read the code
