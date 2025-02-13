@@ -165,10 +165,5 @@ cards played are point to you cards in your hand are points aganst you
 
 create table of 8 x 8 with 10 mines
 
-move with ```w```, ```a```, ```s```, ```d``` or ```8```, ```4```, ```2```, ```6``` on numpad
-
-add flages to squares using ```q``` or ```7``` on numpad
-
-intract with selected square using ```e``` or ```9``` on numpad
-
 intracted squares explod if mine or show number of mines agasent to them
+

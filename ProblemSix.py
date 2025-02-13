@@ -5,13 +5,13 @@ import random
 
 #global varubules and classes
 #printLater = []
-letters = 'abcdefghijklmnopqrstuvwxyz1234567890@#$%^&*-+=_<>`~'
+letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'
 table = []
 mines = []
 falseFlagedSquares = []
 flaged = 0
-width = 51
-hight = 3
+width = 7
+hight = 7
 totalMines = int((width * hight)/4.9)
 squaresleft = (width * hight) - totalMines
 class square:
@@ -117,7 +117,7 @@ def showMap():
     #prints squares by printing their __str__ method
     print('   ', end='')
     for i in range(width):
-        print(f" {letters[i].upper()} ", end='')
+        print(f" {letters[i]} ", end='')
     print()
     for i in range(len(table)):
         print(f"{i+1:<2} ", end='')
@@ -148,11 +148,11 @@ def checkLocation():
             cord = cord.split(',')
             for i in range(2):
                 cord[i] = cord[i].strip()
-                cord[i] = cord[i].lower()
+                #cord[i] = cord[i].lower()
                 #print(cord[i]) 
             if cord[0] in letters:
                 cord[0] = letters.index(cord[0])
-                print(cord[0])
+                #print(cord[0])
                 if 0 <= cord[0] < width:
                     if cord[1].isdigit():
                         cord[1] = int(cord[1])
