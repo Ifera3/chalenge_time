@@ -36,94 +36,19 @@ bordOneLables = []
 for i in range(10):
     bordOneLables.append(Label(window, text=f"{10-i:>2}"))
     bordOneLables[i].grid(row=2+i, column=1, padx=2)
-    bordOneLables.append(Label(window, text=f"{:>2}"))
+for i in range(10):
+    bordOneLables.append(Label(window, text=f"{10-i:>2}"))
+    bordOneLables[i+10].grid(row=12, column=2+i, padx=2)
+
+bordTwoLables = []
+for i in range(10):
+    bordTwoLables.append(Label(window, text=f"{10-i:>2}"))
+    bordTwoLables[i].grid(row=2+i, column=12, padx=2)
+for i in range(10):
+    bordTwoLables.append(Label(window, text=f"{10-i:>2}"))
+    bordTwoLables[i+10].grid(row=12, column=13+i, padx=2)
 
 
-'''l1 = Label(window, text='10')
-l2 = Label(window, text='09')
-l3 = Label(window, text='08')
-l4 = Label(window, text='07')
-l5 = Label(window, text='06')
-l6 = Label(window, text='05')
-l7 = Label(window, text='04')
-l8 = Label(window, text='03')
-l9 = Label(window, text='02')
-l10 = Label(window, text='01')
-l11 = Label(window, text=' A ')
-l12 = Label(window, text=' B ')
-l13 = Label(window, text=' C ')
-l14 = Label(window, text=' D ')
-l15 = Label(window, text=' E ')
-l16 = Label(window, text=' F ')
-l17 = Label(window, text=' G ')
-l18 = Label(window, text=' H ')
-l19 = Label(window, text=' I ')
-l20 = Label(window, text=' J ')'''
-
-ll1 = Label(window, text='10')
-ll2 = Label(window, text='09')
-ll3 = Label(window, text='08')
-ll4 = Label(window, text='07')
-ll5 = Label(window, text='06')
-ll6 = Label(window, text='05')
-ll7 = Label(window, text='04')
-ll8 = Label(window, text='03')
-ll9 = Label(window, text='02')
-ll10 = Label(window, text='01')
-ll11 = Label(window, text=' A ')
-ll12 = Label(window, text=' B ')
-ll13 = Label(window, text=' C ')
-ll14 = Label(window, text=' D ')
-ll15 = Label(window, text=' E ')
-ll16 = Label(window, text=' F ')
-ll17 = Label(window, text=' G ')
-ll18 = Label(window, text=' H ')
-ll19 = Label(window, text=' I ')
-ll20 = Label(window, text=' J ')
-
-'''l1.grid(row=2, column=1, padx=2)
-l2.grid(row=3, column=1, padx=2)
-l3.grid(row=4, column=1, padx=2)
-l4.grid(row=5, column=1, padx=2)
-l5.grid(row=6, column=1, padx=2)
-l6.grid(row=7, column=1, padx=2)
-l7.grid(row=8, column=1, padx=2)
-l8.grid(row=9, column=1, padx=2)
-l9.grid(row=10, column=1, padx=2)
-l10.grid(row=11, column=1, padx=2)
-l11.grid(row=12, column=2, padx=3)
-l12.grid(row=12, column=3, padx=3)
-l13.grid(row=12, column=4, padx=3)
-l14.grid(row=12, column=5, padx=3)
-l15.grid(row=12, column=6, padx=3)
-l16.grid(row=12, column=7, padx=3)
-l17.grid(row=12, column=8, padx=3)
-l18.grid(row=12, column=9, padx=3)
-l19.grid(row=12, column=10, padx=3)
-l20.grid(row=12, column=11, padx=3)'''
-
-ll1.grid(row=2, column=12, padx=2)
-ll2.grid(row=3, column=12, padx=2)
-ll3.grid(row=4, column=12, padx=2)
-ll4.grid(row=5, column=12, padx=2)
-ll5.grid(row=6, column=12, padx=2)
-ll6.grid(row=7, column=12, padx=2)
-ll7.grid(row=8, column=12, padx=2)
-ll8.grid(row=9, column=12, padx=2)
-ll9.grid(row=10, column=12, padx=2)
-ll10.grid(row=11, column=12, padx=2)
-ll11.grid(row=12, column=13, padx=3)
-ll12.grid(row=12, column=14, padx=3)
-ll13.grid(row=12, column=15, padx=3)
-ll14.grid(row=12, column=16, padx=3)
-ll15.grid(row=12, column=17, padx=3)
-ll16.grid(row=12, column=18, padx=3)
-ll17.grid(row=12, column=19, padx=3)
-ll18.grid(row=12, column=20, padx=3)
-ll19.grid(row=12, column=21, padx=3)
-ll20.grid(row=12, column=22, padx=3)
-
-#0.083% of its former glory
 def gogrt(event):
     #print(event)
     global recentcord
@@ -138,8 +63,13 @@ def gogrt2(event):
 
 buttonlist1 = []
 showlist1 = []
+for r in range(10):
+    for c in range(10):
+        showlist1.append(StringVar(window))
+        boat11 = Button(window, textvariable=boatshow11, command=lambda m=[0,0]: gogrt(m))
 
-boatshow11 = StringVar(window)
+
+'''boatshow11 = StringVar(window)
 showlist1.append(boatshow11)
 boat11 = Button(window, textvariable=boatshow11, command=lambda m=[0,0]: gogrt(m))
 buttonlist1.append(boat11)
@@ -547,6 +477,7 @@ for i in range(1,11):
         count = count+1
 for i in showlist1:
     i.set('   ')
+'''
 
 buttonlist2 = []
 showlist2 = []
