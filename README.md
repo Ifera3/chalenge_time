@@ -175,3 +175,4 @@ intracted squares explod if mine or show number of mines agasent to them
 will still run with tekinter
 
 be smaller and easry to read the code
+

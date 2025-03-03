@@ -323,7 +323,7 @@ def g():
         if sink2 == 5:
             winning()
 
-    window = tk.Tk()
+    """window = tk.Tk()
     #print("die")
     window.attributes('-topmost',True)
     window.title('Board')
@@ -1307,6 +1307,107 @@ def g():
                         if showlist1[count].get() == 'B ':
                             return False
                     count = count + 1
+        else:
+            return True
+
+    window.mainloop()"""
+
+    window = tk.Tk()
+    window.attributes('-topmost',True)
+    window.title('Board')
+
+    bordlable1 = Label(window, text='Your Bord', font=('Comic sans MS', 10))
+    bordlable1.grid(row=1,column=5, columnspan=4)
+    bordlable2 = Label(window, text='Oponet Bord', font=('Comic sans MS', 10))
+    bordlable2.grid(row=1,column=16, columnspan=4)
+
+    instructions = StringVar(window)
+    instructions.set("Place boat")
+    instructionshow = Label(window, textvariable=instructions)
+    instructionshow.grid(row=13, column=1, columnspan=22)
+
+    bordOneLables = []
+    for i in range(10):
+        bordOneLables.append(Label(window, text=f"{10-i:>2}"))
+        bordOneLables[i].grid(row=2+i, column=1, padx=2)
+    for i in range(10):
+        bordOneLables.append(Label(window, text=f"{10-i:>2}"))
+        bordOneLables[i+10].grid(row=12, column=2+i, padx=2)
+
+    bordTwoLables = []
+    for i in range(10):
+        bordTwoLables.append(Label(window, text=f"{10-i:>2}"))
+        bordTwoLables[i].grid(row=2+i, column=12, padx=2)
+    for i in range(10):
+        bordTwoLables.append(Label(window, text=f"{10-i:>2}"))
+        bordTwoLables[i+10].grid(row=12, column=13+i, padx=2)
+
+
+    def gogrt(event):
+        #print(event)
+        global recentcord
+        recentcord = event
+        #run(1)
+
+    def gogrt2(event):
+        #print(event)
+        global recentcord
+        recentcord = event
+        #run(2)
+
+    showlist1 = []
+    buttonlist1 = []
+    count = 0
+    for r in range(10):
+        for c in range(10):
+            showlist1.append(StringVar(window))
+            buttonlist1.append(Button(window, textvariable=showlist1[count], command=lambda m=[r,c]: gogrt(m)))
+            count += 1
+
+    count = 0 
+    for r in range(10):
+        for c in range(10):
+            buttonlist1[count].grid(row=(11-r), column=(c+2), padx=3)
+            count += 1
+    for i in showlist1:
+        i.set('   ')
+
+    showlist2 = []
+    buttonlist2 = []
+    count = 0
+    for r in range(10):
+        for c in range(10):
+            showlist2.append(StringVar(window))
+            buttonlist2.append(Button(window, textvariable=showlist2[count], command=lambda m=[r,c]: gogrt2(m)))
+            count += 1
+
+    count = 0 
+    for i in range(1,11):
+        for I in range(1,11):
+            buttonlist2[count].grid(row=(12-i), column=(I+12), padx=3)
+            count = count+1
+    for i in showlist2:
+        i.set('   ')
+    #for i in range(len(showlist2)):
+    #    showlist2[i].set(i)
+
+    def updateBoard():
+        for boat in boatB1:
+            for square in boat:
+                showlist1[square[0]][square[1]].set('B')
+        for square in hitB2:
+            showlist2[square[0]][square[1]].set('H')
+        for square in missB2:
+            showlist2[square[0]][square[1]].set('M')
+        for square in hitB1:
+            showlist1[square[0]][square[1]].set('H')
+        for square in missB1:
+            showlist1[square[0]][square[1]].set('M')
+
+    def boatHere(check):
+        for square in check:
+            if showlist1[square[0]][square[1]].get() == 'B':
+                return False
         else:
             return True
 
