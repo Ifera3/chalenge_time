@@ -3,4 +3,6 @@
 import random
 
 for i in range(100):
-    print(random.random())
+    if i == 24:
+        print(i)
+        raise Exception("hi")

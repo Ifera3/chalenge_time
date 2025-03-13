@@ -15,36 +15,83 @@ tempararyCord1 = [] #place for storing cords for boat placement
 placedBoats = 0
 
 class square:
-    hit = False
-    miss = False
-    boat = 0
-    cords = [-1,-1]
-    button = None
-    disply = None
-    onBoard = 0
-
-    def gogrt(self,event):
-        #print(event)
-        global recentcord
-        recentcord = event
-        run(self.onBoard, self.cords)
-
     def __init__(self,cord,board,window):
+        self.hit = False
+        self.miss = False
         self.cords = cord
         self.onBoard = board
         #creates button on the game board
         self.disply = StringVar(window)
         self.button = Button(window, textvariable=self.disply, command=lambda m=self.cords: self.gogrt(m))
+        #places onto the window
         if self.onBoard == 1:
             self.button.grid(column=(2+self.cords[0]), row=(11-self.cords[1]), padx=3)
         elif self.onBoard == 2:
             self.button.grid(column=(13+self.cords[0]), row=(11-self.cords[1]), padx=3)
         self.disply.set('   ')
 
+    def gogrt(self,event):
+        #print(event)
+        global recentcord
+        recentcord = event
+        if self.onBoard == 1 and len(boatsOnBord1) < 5:
+            addBoat(self.cords)
+        elif self.onBoard == 2 and len(boatsOnBord1) == 5:
+            shoot(self.cords)
+        if len(boatsOnBord1) == 5 and len(boatsOnBord2) == 0:
+            aiPlaceBoats()
+
+class boat:
+    def __init__(self,startCord,tempararyCord,boatype,board):
+        modX = 0
+        modY = 0
+        self.sink = False
+        self.size = boatype
+        self.cords = []
+        self.onBoard = board
+        modX = 0
+        modY = 0
+        if startCord[0] > tempararyCord[0] and startCord[1] == tempararyCord[1]:
+            modX = -1
+            modY = 0
+        elif startCord[0] < tempararyCord[0] and startCord[1] == tempararyCord[1]:
+            modX = 1
+            modY = 0
+        elif startCord[0] == tempararyCord[0] and startCord[1] > tempararyCord[1]:
+            modX = 0
+            modY = -1
+        elif startCord[0] == tempararyCord[0] and startCord[1] < tempararyCord[1]:
+            modX = 0
+            modY = 1
+        if modX == modY:
+            raise Exception("no cords")
+        for space in range(boatype):
+            #check if still on the board
+            #print(startCord[0] + (space*modX),startCord[1] + (space*modY))
+            if -1 < startCord[0] + (space*modX) < 10 and -1 < startCord[1] + (space*modY) < 10:
+                #print(aiBoats,cords,i,(i*modX),(i*modY),(cords[0] + (i*modX))*10 + (cords[1] + (i*modY)),[cords[0] + (i*modX), cords[1] + (i*modY)])
+                #makes sure it dosen't place ontop of other boats
+                if self.onBoard == 1:
+                    if buttonlist1[(startCord[0] + (space*modX))*10 + (startCord[1] + (space*modY))].disply.get() == '   ':
+                        self.cords.append([startCord[0] + (space*modX), startCord[1] + (space*modY)])
+                    else:
+                        raise Exception("Square ocupide")
+                elif self.onBoard == 2:
+                    if buttonlist2[(startCord[0] + (space*modX))*10 + (startCord[1] + (space*modY))].disply.get() == '   ':
+                        self.cords.append([startCord[0] + (space*modX), startCord[1] + (space*modY)])
+                    else:
+                        raise Exception("Square ocupide")
+            else:
+                raise Exception("Off board")
+        for spot in self.cords:
+            if self.onBoard == 1:
+                buttonlist1[(spot[0]*10) + spot[1]].disply.set("B")
+            elif self.onBoard == 2:
+                buttonlist2[(spot[0]*10) + spot[1]].disply.set("B")
+
 def addBoat(cords):
     global tempararyCord1
     global placedBoats
-    newBoat = []
     #print(cords[0]*10+cords[1],cords)
     #checks that not being placed on already exsisting boat to start
     if tempararyCord1 == [] and buttonlist1[cords[0]*10+cords[1]].disply.get() == '   ':
@@ -53,64 +100,13 @@ def addBoat(cords):
     else:
         buttonlist1[tempararyCord1[0]*10+tempararyCord1[1]].disply.set("   ")
         #print('fail')
-        #checks for direction of boat being placed
-        if cords[0] > tempararyCord1[0] and cords[1] == tempararyCord1[1]:
-            for newX in range(boatData[placedBoats][1]):
-                #checks that boat being placed is on the board
-                if -1 < tempararyCord1[0] + newX < 10:
-                    #checks that not being placed on already exsisting boat
-                    if buttonlist1[(tempararyCord1[0] + newX)*10 + tempararyCord1[1]].disply.get() == '   ':
-                        newBoat.append([tempararyCord1[0] + newX, tempararyCord1[1]])
-                    else:
-                        tempararyCord1 = []
-                        return
-                else:
-                    tempararyCord1 = []
-                    return
-        elif cords[0] < tempararyCord1[0] and cords[1] == tempararyCord1[1]:
-            for newX in range(boatData[placedBoats][1]):
-                #checks that boat being placed is on the board
-                if -1 < tempararyCord1[0] - newX < 10:
-                    #checks that not being placed on already exsisting boat
-                    if buttonlist1[(tempararyCord1[0] - newX)*10 + tempararyCord1[1]].disply.get() == '   ':
-                        newBoat.append([tempararyCord1[0] - newX, tempararyCord1[1]])
-                    else:
-                        tempararyCord1 = []
-                        return
-                else:
-                    tempararyCord1 = []
-                    return
-        elif cords[0] == tempararyCord1[0] and cords[1] > tempararyCord1[1]:
-            for newY in range(boatData[placedBoats][1]):
-                #checks that boat being placed is on the board
-                if -1 < tempararyCord1[1] + newY < 10:
-                    #checks that not being placed on already exsisting boat
-                    if buttonlist1[tempararyCord1[0]*10 + (tempararyCord1[1] + newY)].disply.get() == '   ':
-                        newBoat.append([tempararyCord1[0], tempararyCord1[1] + newY])
-                    else:
-                        tempararyCord1 = []
-                        return
-                else:
-                    tempararyCord1 = []
-                    return
-        elif cords[0] == tempararyCord1[0] and cords[1] < tempararyCord1[1]:
-            for newY in range(boatData[placedBoats][1]):
-                #checks that boat being placed is on the board
-                if -1 < tempararyCord1[1] - newY < 10:
-                    #checks that not being placed on already exsisting boat
-                    if buttonlist1[tempararyCord1[0]*10 + (tempararyCord1[1] - newY)].disply.get() == '   ':
-                        newBoat.append([tempararyCord1[0], tempararyCord1[1] - newY])
-                    else:
-                        tempararyCord1 = []
-                        return
-                else:
-                    tempararyCord1 = []
-                    return
-        #adds the boat to the list of placed boats and updated the visuals of the board
-        boatsOnBord1.append(newBoat)
+        try:
+            #adds the boat to the list of placed boats and updated the visuals of the board
+            boatsOnBord1.append(boat(tempararyCord1,cords,boatData[placedBoats][1],1))
+            placedBoats += 1
+        except:
+            print("faild place")
         tempararyCord1 = []
-        placedBoats += 1
-    updateBoard()
 
 def aiPlaceBoats():
     aiBoats = 0 # how many boats the ai has placed
@@ -119,12 +115,16 @@ def aiPlaceBoats():
         cords = [random.randrange(10), random.randrange(10)]
         #randomly selects the direction by creating a positive or negitive constant iin the incremented direction wile the other direction is set to 0 to make it not change
         if random.randrange(1) == 1:
-            modX = random.choice([1,-1])
-            modY = 0
+            tepmcord = [cords[0] + random.choice([1,-1]), cords[1]]
         else:
-            modY = random.choice([1,-1])
-            modX = 0
-        newBoat = [] #list for new boat points
+            tepmcord = [cords[0], cords[1] + random.choice([1,-1])]
+        try:
+            #adds the boat to the list of placed boats and updated the visuals of the board
+            boatsOnBord2.append(boat(cords,tepmcord,boatData[aiBoats][1],2))
+            aiBoats += 1
+        except:
+            print("faild place")
+        '''newBoat = [] #list for new boat points
         for i in range(boatData[aiBoats][1]):
             #check if still on the board
             if -1 < cords[0] + (i*modX) < 10 and -1 < cords[1] + (i*modY) < 10:
@@ -140,19 +140,10 @@ def aiPlaceBoats():
         else: #only runs if all point for the boat where placed corectly
             boatsOnBord2.append(newBoat)
             aiBoats += 1
-            updateBoard()
+            updateBoard()'''
 
-
-
-def run(bord,cords):
-    #gets run when a button is pushed
-    #print(boatsOnBord1,len(boatsOnBord1))
-    if bord == 1 and len(boatsOnBord1) < 5:
-        addBoat(cords)
-    elif bord == 2:
-        shoot()
-    if len(boatsOnBord1) == 5 and len(boatsOnBord2) == 0:
-        aiPlaceBoats()
+def shoot(cord):
+    ...
 
 #creats the window and forces it to be on top of all other windows
 window = tk.Tk()
@@ -201,18 +192,10 @@ for c in range(10):
 
 def updateBoard():
     #Updates what is being disblaed on the board
-    for boat in boatsOnBord1:
-        for square in boat:
-            #print(square,'place',square[0]*10+square[1])
-            buttonlist1[square[0]*10+square[1]].disply.set('B')
     for square in hitOnBord1:
         buttonlist1[square[0]*10+square[1]].disply.set('H')
     for square in missOnBord1:
         buttonlist1[square[0]*10+square[1]].disply.set('M')
-    '''for boat in boatsOnBord2:
-        for square in boat:
-            #print(square,'place',square[0]*10+square[1])
-            buttonlist2[square[0]*10+square[1]].disply.set('B')'''
     for square in hitOnBord2:
         buttonlist2[square[0]*10+square[1]].disply.set('H')
     for square in missOnBord2:
